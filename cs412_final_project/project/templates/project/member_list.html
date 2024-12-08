@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Members</title>
+</head>
+<body>
+    <h1>Members</h1>
+    <ul>
+        {% for member in object_list %}
+            <li><a href="{{ member.get_absolute_url }}">{{ member.name }}</a></li>
+        {% endfor %}
+    </ul>
+    <a href="/project/books/">View Books</a>
+</body>
+</html>

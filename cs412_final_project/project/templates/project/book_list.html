@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books</title>
+</head>
+<body>
+    <h1>Books</h1>
+    <ul>
+        {% for book in object_list %}
+            <li><a href="{{ book.get_absolute_url }}">{{ book.title }}</a> by {{ book.author }}</li>
+        {% endfor %}
+    </ul>
+    <a href="/project/members/">View Members</a>
+</body>
+</html>
