@@ -135,7 +135,7 @@ class ReadingProgressUpdateView(UpdateView):
 
 class ReadingProgressCreateView(CreateView):
     model = ReadingProgress
-    fields = ['member', 'book', 'progress_percentage', 'comments']
+    fields = ['member', 'book', 'progress_percentage']
     template_name = 'project/reading_progress_form.html'
     success_url = reverse_lazy('reading-progress-list')
 
@@ -164,7 +164,7 @@ class MyProfileView(TemplateView):
 
 def homepage(request):
     total_books = Book.objects.count()
-    total_members = 0 
+    total_members = Member.objects.count()
     upcoming_meetings = Meeting.objects.filter(date__gte=now()).order_by('date')[:5]
 
     context = {
