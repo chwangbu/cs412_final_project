@@ -1,7 +1,13 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Member(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='member'
+    )
     name = models.CharField(max_length=100)
     email = models.EmailField()
     join_date = models.DateField()
@@ -26,19 +32,16 @@ class Meeting(models.Model):
     date = models.DateTimeField()
     location = models.CharField(max_length=200)
     agenda = models.TextField()
-    notes = models.TextField(blank=True, null=True)
-    books = models.ManyToManyField(Book, related_name='meetings')
 
     def __str__(self):
-        return f"Meeting on {self.date.strftime('%Y-%m-%d')} at {self.location}"
+        return f"{self.date} at {self.location}"
 
 
 class ReadingProgress(models.Model):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='progess')
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='progress')
-    progress_percentage = models.IntegerField(default=0)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    progress_percentage = models.IntegerField()
     last_updated = models.DateTimeField(auto_now=True)
-    comments = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.member.name} - {self.book.title} ({self.progress_percentage}%)"
+        return f"{self.member.name}: {self.progress_percentage}% of {self.book.title}"

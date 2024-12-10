@@ -8,18 +8,34 @@
 <body>
     <h1>My Profile</h1>
     <h2>Welcome, {{ member.name }}</h2>
+    <p>Email: {{ member.email }}</p>
+    <p>Role: {{ member.role }}</p>
     <h3>Your Books</h3>
-    <ul>
-        {% for book in books %}
-            <li>{{ book.title }} by {{ book.author }}</li>
-        {% endfor %}
-    </ul>
+    {% if books %}
+        <ul>
+            {% for book in books %}
+                <li>{{ book.title }} by {{ book.author }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no books in progress.</p>
+    {% endif %}
     <h3>Your Reading Progress</h3>
-    <ul>
-        {% for progress in progress %}
-            <li>{{ progress.book.title }}: {{ progress.progress_percentage }}% completed</li>
-        {% endfor %}
-    </ul>
+    {% if progress %}
+        <ul>
+            {% for progress in progress %}
+                <li>
+                    <strong>{{ progress.book.title }}</strong>: {{ progress.progress_percentage }}% completed
+                    {% if progress.comments %}
+                        <br><em>Comments:</em> {{ progress.comments }}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You have no reading progress recorded.</p>
+    {% endif %}
+
     <a href="{% url 'homepage' %}" class="home-button">Go to Homepage</a>
 </body>
 </html>

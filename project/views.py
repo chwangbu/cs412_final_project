@@ -5,10 +5,17 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.utils.timezone import now
 
 
 # Create your views here.
 # Member Views
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+    
 class MemberListView(ListView):
     model = Member
     template_name = 'project/member_list.html'
@@ -60,16 +67,19 @@ class BookListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(title__icontains=query) | queryset.filter(author__icontains=query)
+        genre = self.request.GET.get('genre')
+        author = self.request.GET.get('author')
+        if genre:
+            queryset = queryset.filter(genre__icontains=genre)
+        if author:
+            queryset = queryset.filter(author__icontains=author)
         return queryset
 
 class BookDetailView(DetailView):
     model = Book
     template_name = 'project/book_detail.html'
 
-class BookCreateView(CreateView):
+class BookCreateView(AdminRequiredMixin, CreateView):
     model = Book
     fields = ['title', 'author', 'genre', 'publication_year', 'isbn']
     template_name = 'project/book_form.html'
@@ -81,7 +91,7 @@ class BookUpdateView(UpdateView):
     template_name = 'project/book_form.html'
     success_url = reverse_lazy('book-list')
 
-class BookDeleteView(DeleteView):
+class BookDeleteView(AdminRequiredMixin, DeleteView):
     model = Book
     template_name = 'project/book_confirm_delete.html'
     success_url = reverse_lazy('book-list')
@@ -112,10 +122,14 @@ class MeetingDeleteView(DeleteView):
     template_name = 'project/meeting_confirm_delete.html'
     success_url = reverse_lazy('meeting-list')
 
-class ReadingProgressListView(ListView):
+class ReadingProgressUpdateView(UpdateView):
     model = ReadingProgress
-    template_name = 'project/reading_progress_list.html'
-    context_object_name = 'progress'
+    fields = ['progress_percentage', 'comments']
+    template_name = 'project/reading_progress_form.html'
+    success_url = reverse_lazy('reading-progress-list')
+
+    def get_queryset(self):
+        return ReadingProgress.objects.filter(member=self.request.user.member)
 
 class ReadingProgressCreateView(CreateView):
     model = ReadingProgress
@@ -128,6 +142,11 @@ class ReadingProgressUpdateView(UpdateView):
     fields = ['progress_percentage', 'comments']
     template_name = 'project/reading_progress_form.html'
     success_url = reverse_lazy('reading-progress-list')
+
+class ReadingProgressListView(ListView):
+    model = ReadingProgress
+    template_name = 'project/reading_progress_list.html'
+    context_object_name = 'progress'
 
 @method_decorator(login_required, name='dispatch')
 class MyProfileView(TemplateView):
@@ -142,4 +161,13 @@ class MyProfileView(TemplateView):
         return context
 
 def homepage(request):
-    return render(request, 'project/homepage.html')
+    total_books = Book.objects.count()
+    total_members = 0 
+    upcoming_meetings = Meeting.objects.filter(date__gte=now()).order_by('date')[:5]
+
+    context = {
+        'total_books': total_books,
+        'total_members': total_members,
+        'upcoming_meetings': upcoming_meetings,
+    }
+    return render(request, 'project/homepage.html', context)

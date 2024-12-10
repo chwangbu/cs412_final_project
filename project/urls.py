@@ -1,6 +1,6 @@
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView
-from .views import homepage, MemberListView, MemberDetailView, BookListView, BookDetailView, MemberCreateView, MemberDeleteView, MemberUpdateView, BookCreateView, BookDeleteView, BookUpdateView, MeetingCreateView, MeetingDeleteView, MeetingDetailView, MeetingListView, MeetingUpdateView, ReadingProgressListView, ReadingProgressCreateView, ReadingProgressUpdateView, MyProfileView
+from django.contrib.auth import views as auth_views
+from .views import homepage, MemberListView, MemberDetailView, BookListView, BookDetailView, MemberCreateView, MemberDeleteView, MemberUpdateView, BookCreateView, BookDeleteView, BookUpdateView, MeetingCreateView, MeetingDeleteView, MeetingDetailView, MeetingListView, MeetingUpdateView, ReadingProgressListView, ReadingProgressCreateView, ReadingProgressUpdateView, ReadingProgressListView, MyProfileView
 
 urlpatterns = [
     path('', homepage, name='homepage'),
@@ -22,7 +22,7 @@ urlpatterns = [
     path('progress/', ReadingProgressListView.as_view(), name='reading-progress-list'),
     path('progress/add/', ReadingProgressCreateView.as_view(), name='reading-progress-add'),
     path('progress/<int:pk>/edit/', ReadingProgressUpdateView.as_view(), name='reading-progress-edit'),
-    path('login/', LoginView.as_view(template_name='project/login.html'), name='login'),
-    path('logout/', LogoutView.as_view(next_page='homepage'), name='logout'),
+    path('login/', auth_views.LoginView.as_view(template_name='project/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('my-profile/', MyProfileView.as_view(), name='my-profile'),
 ]

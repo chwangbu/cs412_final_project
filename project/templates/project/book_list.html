@@ -12,18 +12,29 @@
     <form method="get">
         <label for="search">Search:</label>
         <input type="text" name="q" id="search" placeholder="Search by title or author" value="{{ request.GET.q }}">
-        <button type="submit">Search</button>
-    </form>
 
+        <label for="genre">Genre:</label>
+        <input type="text" name="genre" id="genre" placeholder="Filter by genre" value="{{ request.GET.genre }}">
+
+        <label for="author">Author:</label>
+        <input type="text" name="author" id="author" placeholder="Filter by author" value="{{ request.GET.author }}">
+
+        <button type="submit">Apply Filters</button>
+    </form>
     <ul>
         {% for book in books %}
             <li>
                 <a href="{% url 'book-detail' book.pk %}">{{ book.title }}</a> by {{ book.author }}
+                {% if user.is_staff %}
+                    <a href="{% url 'book-edit' book.pk %}">Edit</a> | 
+                    <a href="{% url 'book-delete' book.pk %}">Delete</a>
+                {% endif %}
             </li>
         {% endfor %}
     </ul>
-
-    <a href="{% url 'book-add' %}">Add New Book</a>
+    {% if user.is_staff %}
+        <a href="{% url 'book-add' %}">Add New Book</a>
+    {% endif %}
     <br>
     <a href="/project/members/">View Members</a>
 </body>
