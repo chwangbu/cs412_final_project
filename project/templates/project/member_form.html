@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>{{ view.action }} Member</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'project/css/styles.css' %}">
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">Back</a>
+    <h1>{{ view.action }} Member</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+    <a href="{% url 'member-list' %}">Back to Members</a>
+</body>
+</html>

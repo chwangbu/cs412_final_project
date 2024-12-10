@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Reading Progress</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'project/css/styles.css' %}">
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">Back</a>
+    <h1>Reading Progress</h1>
+    <ul>
+        {% for progress in progress %}
+            <li>
+                <strong>{{ progress.member.name }}</strong> is {{ progress.progress_percentage }}% through 
+                <em>{{ progress.book.title }}</em>
+                - Last updated: {{ progress.last_updated }}
+                <a href="{% url 'reading-progress-edit' progress.pk %}">Edit</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'reading-progress-add' %}">Add Reading Progress</a>
+</body>
+</html>

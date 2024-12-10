@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <title>Reading Progress Form</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'project/css/styles.css' %}">
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-button">Back</a>
+    <h1>{{ view.action }} Reading Progress</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save</button>
+    </form>
+</body>
+</html>
