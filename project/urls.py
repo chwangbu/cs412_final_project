@@ -25,4 +25,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='project/login.html'), name='login'),
     path('logout/', custom_logout, name='logout'),
     path('my-profile/', MyProfileView.as_view(), name='my-profile'),
+    path('books/add/', BookCreateView.as_view(), name='book-add'),
 ]

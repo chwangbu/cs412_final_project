@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.timezone import now
 from django.contrib.auth import logout
 from django.shortcuts import redirect
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -36,14 +37,16 @@ class MemberDetailView(DetailView):
 
 class MemberCreateView(CreateView):
     model = Member
-    fields = ['name', 'email', 'join_date', 'role']
-    template_name = 'project/member_form.html'
-    success_url = reverse_lazy('member-list')
+    fields = ['name', 'email', 'join_date', 'role', 'password']
 
-    def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
-        context['view'] = {'action':'Add'}
-        return context
+    def form_valid(self, form):
+        user = User.objects.create_user(
+            username=form.cleaned_data['email'],
+            email=form.cleaned_data['email'],
+            password=form.cleaned_data['password']
+        )
+        form.instance.user = user
+        return super().form_valid(form)
 
 class MemberUpdateView(UpdateView):
     model = Member
@@ -69,12 +72,15 @@ class BookListView(ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        genre = self.request.GET.get('genre')
-        author = self.request.GET.get('author')
-        if genre:
-            queryset = queryset.filter(genre__icontains=genre)
+        query = self.request.GET.get('q', '')
+        author = self.request.GET.get('author', '')
+
+        if query:
+            queryset = queryset.filter(title__icontains=query)
+
         if author:
             queryset = queryset.filter(author__icontains=author)
+
         return queryset
 
 class BookDetailView(DetailView):
@@ -87,6 +93,14 @@ class BookCreateView(AdminRequiredMixin, CreateView):
     template_name = 'project/book_form.html'
     success_url = reverse_lazy('book-list')
 
+    def test_func(self):
+        return self.request.user.is_staff
+    
+    def handle_no_permission(self):
+        from django.contrib import messages
+        messages.error(self.request, "Only admins can add books.")
+        return redirect('homepage')
+    
 class BookUpdateView(UpdateView):
     model = Book
     fields = ['title', 'author', 'genre', 'publication_year', 'isbn']
@@ -109,7 +123,7 @@ class MeetingDetailView(DetailView):
 
 class MeetingCreateView(CreateView):
     model = Meeting
-    fields = ['date', 'location', 'agenda', 'notes', 'books']
+    fields = ['date', 'location', 'agenda']
     template_name = 'project/meeting_form.html'
     success_url = reverse_lazy('meeting-list')
 

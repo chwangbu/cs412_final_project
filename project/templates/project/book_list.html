@@ -10,11 +10,8 @@
     <a href="javascript:history.back()" class="back-button">Back</a>
     <h1>Books</h1>
     <form method="get">
-        <label for="search">Search:</label>
-        <input type="text" name="q" id="search" placeholder="Search by title or author" value="{{ request.GET.q }}">
-
-        <label for="genre">Genre:</label>
-        <input type="text" name="genre" id="genre" placeholder="Filter by genre" value="{{ request.GET.genre }}">
+        <label for="search">Search Book:</label>
+        <input type="text" name="q" id="search" placeholder="Filter by title" value="{{ request.GET.q }}">
 
         <label for="author">Author:</label>
         <input type="text" name="author" id="author" placeholder="Filter by author" value="{{ request.GET.author }}">
