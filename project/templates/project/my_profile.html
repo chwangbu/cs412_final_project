@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Profile</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'project/css/styles.css' %}">
+</head>
+<body>
+    <h1>My Profile</h1>
+    <h2>Welcome, {{ member.name }}</h2>
+    <h3>Your Books</h3>
+    <ul>
+        {% for book in books %}
+            <li>{{ book.title }} by {{ book.author }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Your Reading Progress</h3>
+    <ul>
+        {% for progress in progress %}
+            <li>{{ progress.book.title }}: {{ progress.progress_percentage }}% completed</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'homepage' %}" class="home-button">Go to Homepage</a>
+</body>
+</html>
