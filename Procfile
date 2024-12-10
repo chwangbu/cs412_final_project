@@ -1,1 +1,2 @@
-web: gunicorn project.wsgi --log-file -
+web: gunicorn cs412_final_project.wsgi --log-file -
+
