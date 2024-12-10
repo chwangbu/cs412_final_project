@@ -128,3 +128,4 @@ STATICFILES_DIRS = [BASE_DIR / "project" / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/project/my-profile/'

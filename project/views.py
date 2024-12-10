@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.utils.timezone import now
+from django.contrib.auth import logout
+from django.shortcuts import redirect
 
 
 # Create your views here.
@@ -156,7 +158,7 @@ class MyProfileView(TemplateView):
         context = super().get_context_data(**kwargs)
         member = self.request.user.member
         context['member'] = member
-        context['books'] = Book.objects.filter(progress__member=member).distinct()
+        context['books'] = Book.objects.filter(readingprogress__member=member).distinct()
         context['progress'] = ReadingProgress.objects.filter(member=member)
         return context
 
@@ -171,3 +173,7 @@ def homepage(request):
         'upcoming_meetings': upcoming_meetings,
     }
     return render(request, 'project/homepage.html', context)
+
+def custom_logout(request):
+    logout(request)
+    return redirect('homepage')
