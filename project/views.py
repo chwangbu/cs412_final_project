@@ -1,8 +1,11 @@
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .models import Member, Book, Meeting, ReadingProgress
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 
 # Create your views here.
 # Member Views
@@ -125,6 +128,18 @@ class ReadingProgressUpdateView(UpdateView):
     fields = ['progress_percentage', 'comments']
     template_name = 'project/reading_progress_form.html'
     success_url = reverse_lazy('reading-progress-list')
+
+@method_decorator(login_required, name='dispatch')
+class MyProfileView(TemplateView):
+    template_name = 'project/my_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        member = self.request.user.member
+        context['member'] = member
+        context['books'] = Book.objects.filter(progress__member=member).distinct()
+        context['progress'] = ReadingProgress.objects.filter(member=member)
+        return context
 
 def homepage(request):
     return render(request, 'project/homepage.html')
